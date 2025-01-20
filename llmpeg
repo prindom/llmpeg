@@ -11,7 +11,24 @@ fi
 user_input="$*"
 
 # Conditional check for API keys
-if [ -n "$OPENAI_API_KEY" ]; then
+if [ -n "$OLLAMA_DEFAULT_MODEL" ]; then
+    # Store the curl response as a variable for Ollama API
+    response=$(curl -s "http://localhost:8000/v1/chat/completions" \
+        -H "Content-Type: application/json" \
+        -d "{
+            \"model\": \"$OLLAMA_DEFAULT_MODEL\",
+            \"messages\": [
+                {
+                    \"role\": \"system\",
+                    \"content\": \"You write ffmpeg commands based on the description from the user. You should only respond with a command line command for ffmpeg, never any additional text. All responses should be a single line.\"
+                },
+                {
+                    \"role\": \"user\",
+                    \"content\": \"$user_input\"
+                }
+            ]
+        }")
+elif [ -n "$OPENAI_API_KEY" ]; then
     # Store the curl response as a variable for OpenAI API
     response=$(curl -s "https://api.openai.com/v1/chat/completions" \
         -H "Content-Type: application/json" \
@@ -21,7 +38,7 @@ if [ -n "$OPENAI_API_KEY" ]; then
             \"messages\": [
                 {
                     \"role\": \"system\",
-                    \"content\": \"You write ffmpeg commands based on the description from the user. You should only respond with a command line command for ffmpeg, never any additional text. All responses should be a single line without any line breaks.\"
+                    \"content\": \"You write ffmpeg commands based on the description from the user. You should only respond with a command line command for ffmpeg, never any additional text. All responses should be a single line.\"
                 },
                 {
                     \"role\": \"user\",
@@ -40,7 +57,7 @@ elif [ -n "$GROQ_API_KEY" ]; then
             \"messages\": [
                 {
                     \"role\": \"system\",
-                    \"content\": \"You write ffmpeg commands based on the description from the user. You should only respond with a command line command for ffmpeg, never any additional text. Keep the output folder same as the input folder in the generated command. Propose the output file name based on input file name and the modification applied on it. All responses should be a single line without any line breaks.\n\nFor example, if the user asks \\\"convert a video folderX/input.mp4 from MP4 to WebM?\\\", you should respond with: \\\"ffmpeg -i folderX/input.mp4 -c:v libvpx -c:a libvorbis folderX/output_in_webm.webm\\\"\"
+                    \"content\": \"You write ffmpeg commands based on the description from the user. You should only respond with a command line command for ffmpeg, never any additional text. All responses should be a single line.\"
                 },
                 {
                     \"role\": \"user\",
@@ -54,7 +71,7 @@ elif [ -n "$GROQ_API_KEY" ]; then
             \"stop\": null
         }")
 else
-    echo "No API key found. Please set OPENAI_API_KEY or GROQ_API_KEY."
+    echo "No API key found. Please set OPENAI_API_KEY, GROQ_API_KEY, or OLLAMA_DEFAULT_MODEL."
     exit 1
 fi
 
