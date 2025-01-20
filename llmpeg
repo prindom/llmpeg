@@ -13,7 +13,7 @@ user_input="$*"
 # Conditional check for API keys
 if [ -n "$OLLAMA_DEFAULT_MODEL" ]; then
     # Store the curl response as a variable for Ollama API
-    response=$(curl -s "http://localhost:11434/api/chat" \
+    response=$(curl -s "http://localhost:11434/api/generate" \
         -H "Content-Type: application/json" \
         -d "{
             \"model\": \"$OLLAMA_DEFAULT_MODEL\",
