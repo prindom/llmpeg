@@ -17,7 +17,7 @@ if [ -n "$OLLAMA_DEFAULT_MODEL" ]; then
         -H "Content-Type: application/json" \
         -d "{
             \"model\": \"$OLLAMA_DEFAULT_MODEL\",
-            \"stream\": \"false\",
+            \"stream\": false,
             \"messages\": [
                 {
                     \"role\": \"system\",
